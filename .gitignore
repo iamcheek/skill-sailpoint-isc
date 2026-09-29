@@ -1,0 +1,11 @@
+# Ignore hidden local/tooling metadata, while allowing repository-level GitHub config.
+.*
+!.gitignore
+!.github/
+
+# Local exports, query output, and investigation scratch data.
+search_results/
+migration/
+*.log
+*.err
+.DS_Store
