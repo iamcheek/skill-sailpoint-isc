@@ -1,0 +1,31 @@
+# SaaS connector SDK: shared foundations
+
+Use for either a custom SaaS connector or a SaaS connectivity customizer. This is a scoped, offline-ready engineering reference, not proof of platform availability or compatibility in a particular tenant. See [connector construction](saas-connectors.md), [commands](commands.md), [customizers](customizers.md) and [runtime/testing](runtime-testing.md).
+
+## Pin the actual contract
+
+1. Inspect the target project's instructions, lockfile, `package.json`, installed `@sailpoint/connector-sdk` declarations/source, Node version, scaffold and build scripts. Record the exact resolved SDK version (and source commit if available), not only a semver range. Do not install dependencies or change versions simply to discover them; ask if installation requires network or credentials.
+2. Compare the relevant installed types and handler implementation to current SailPoint documentation and the target API. SDK code proves what that version exports; documentation describes the platform contract; neither alone proves a feature is enabled in a particular source/tenant. If they conflict, document both, stop before relying on the disputed behavior, and ask or validate safely.
+3. Reviewed reference: [SDK repository at 32c520ae](https://github.com/sailpoint-oss/sp-connector-sdk-js/tree/32c520ae4c675079a9f599286674079a34686fe8), package `1.2.2`; [SaaS Connectivity documentation](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/) and its Markdown pages. This is a reviewed source revision, not a claim about the latest published package. The package declares Node >=18.12.0; the [prerequisites page](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/prerequisites) says >=18.0.0. Use the actual package's stricter applicable constraint and project's supported runtime.
+
+### Known reference conflicts at this revision
+
+- The SDK's [key types](https://github.com/sailpoint-oss/sp-connector-sdk-js/blob/32c520ae4c675079a9f599286674079a34686fe8/lib/commands/command.ts) use `compound.lookupId` and `compound.uniqueId`. The [account-read article](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/commands/account-read) shows different compound fields. Inspect the installed `Key` union and use its helpers rather than copying that example.
+- The reviewed SDK [error enum](https://github.com/sailpoint-oss/sp-connector-sdk-js/blob/32c520ae4c675079a9f599286674079a34686fe8/lib/error.ts) defines `Generic` and `NotFound` only. The [error article](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/error-handling) illustrates additional enum members. Do not generate those unverified members. Application-defined error classes may carry sanitized messages but do not imply a platform-recognized error type.
+- The reviewed SDK's `readConfig()` returns a Promise; some repository README examples do not await it. Check the installed version; don't copy an incompatible example.
+
+### Example: compound keys
+
+A synthetic illustration: a target that exposes both a mutable login name and an immutable system ID might select `compound` in `connector-spec.json`, emit `CompoundKey(<lookup-id>, <unique-id>)` from its account mapper, and read the two components in handlers with `KeyLookupID(input)` and `KeyUniqueID(input)`, validating each and checking target records against both. Mapper and handler tests should assert the key shape. Which target field becomes the lookup ID and which becomes the unique ID, any join between multiple target APIs, entitlement keys and reconciliation rules are integration-specific decisions, not a required pattern for other targets. Code and test definitions alone do not prove what a deployed source uses.
+
+## Shared mental model
+
+- A connector registers standard command handlers against `createConnector()` and exports the connector in the shape its scaffold/runtime expects. A customizer registers interceptors against `createConnectorCustomizer()`; it is not a replacement connector. Both use SDK types and configuration, but their input/output and deployment lifecycles differ.
+- In the reviewed version, a command handler receives `context`, `input` and a typed `Response`; `res.send` emits output. Response also exposes `saveState`, `keepAlive` and `patchConfig`. Check [response source](https://github.com/sailpoint-oss/sp-connector-sdk-js/blob/32c520ae4c675079a9f599286674079a34686fe8/lib/response/index.ts) and each command's types before using them.
+- A simple key has one ID; a compound key has separate lookup and unique IDs in the reviewed SDK. Choose key type from target identifier stability and actual SailPoint behavior, not from an unrelated example. Check list/read/create/update key consistency and correlation separately.
+- `readConfig()` exposes configuration; config can include credentials. Never log the entire object, request headers, raw target records, or credential-bearing local invocation payloads. Use redacted, synthetic fixtures and a reviewed logging policy.
+- Persistent command state, SDK cache and connector data store are distinct. Select them based on verified lifecycle, scope and failure/concurrency semantics; cache is not durable storage. Do not assume writing a cursor or credential rotation is safe merely because an SDK method exists.
+
+## Version-sensitive SDK utilities
+
+The reviewed SDK exposes an HTTP client, cache and data store; their availability and defaults must be verified in the project's installed version. [HTTP client](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/http-client) supports several auth forms and configurable retries; [rate limits](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/handling-rate-limits), [cache](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/caching), and [data store](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/data-store) explain intended usage. In the reviewed source, retry defaults include network errors and 429/500/502/503/504; inspect whether the installed implementation retries a particular write and disable or adjust unsafe retries. Do not assume create/update is idempotent or that a timeout means the target did not change.

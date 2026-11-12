@@ -6,6 +6,10 @@
 # Local exports, query output, and investigation scratch data.
 search_results/
 migration/
+
+# Organization-specific integration profiles (see docs/connectors/profile-building.md#profile-location).
+profiles/
+sailpoint-profiles/
 *.log
 *.err
 .DS_Store

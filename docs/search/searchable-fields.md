@@ -57,7 +57,7 @@ Fields are grouped by "level":
 | `attributes.firstname`, `attributes.lastname` | Name attributes |
 | `attributes.cloudAuthoritativeSource` (string) | Source technical ID |
 | `attributes.cloudLifecycleState` (string) | Lifecycle state |
-| `attributes.identityState` (string) | `ACTIVE`, `INACTIVE_LONG_TERM`, or `INACTIVE_SHORT_TERM` |
+| `attributes.identityState` (string) | Person state: `ACTIVE`, `INACTIVE_LONG_TERM`, or `INACTIVE_SHORT_TERM`. For currently active people, filter with `attributes.identityState:ACTIVE`; do not use top-level `status:ACTIVE` as a substitute, since that is ISC identity-record status. |
 | `attributes.phone` (string) | Alternate phone |
 | `attributes.displayName` (string) | Display name |
 | `attributes.identificationNumber` (string) | Employee number |

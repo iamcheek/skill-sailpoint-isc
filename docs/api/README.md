@@ -6,7 +6,7 @@ The shape of the Identity Security Cloud (ISC) REST API — versioning, HTTP met
 
 | File | Use it for |
 |---|---|
-| [endpoints.md](endpoints.md) | The key endpoints table (accounts, identities, entitlements, access requests, etc.), basic GET examples, and the `/search/v1` POST request envelope. |
+| [endpoints.md](endpoints.md) | The key endpoints table (including historical identity events), endpoint-specific context, basic GET examples, and the `/search/v1` POST request envelope. |
 | [filtering-sorting-pagination.md](filtering-sorting-pagination.md) | The `--query "filters=..."` operator syntax, the verified quoted-date-value bug, sorting, and pagination (including `searchAfter` for >10k results). |
 | [response-fields.md](response-fields.md) | Key response fields and enum values per resource (AccountActivity, Identity, Account, AccessProfile, Role). |
 | [../roles/](../roles/README.md) | Role-specific endpoint methods, JSON Patch update syntax, membership criteria examples, permissions, and verification. |

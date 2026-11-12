@@ -1,0 +1,18 @@
+# SaaS SDK runtime, testing and safe operations
+
+Use alongside [SDK foundations](sdk.md), [connector commands](commands.md), or [customizers](customizers.md). The source project's actual scripts and installed CLI govern commands; never assume a local example proves tenant behavior.
+
+## Design for the runtime
+
+- The vendor [limits](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/limits) and [timeouts](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/connector-timeouts) pages describe a three-minute interval without a response/heartbeat, a 256 KiB maximum per response including metadata, and 512 MB per running instance. Recheck current limits/version before relying on them. Stream pages, bound concurrency and avoid unbounded accumulation. A heartbeat is not proof that work has completed.
+- Model target pagination, checkpoint timing, rate limits, elapsed time, response size and error/retry behavior. Protect against repeated pages, ambiguous joins, transient failures and partial writes. Re-read target state before retrying an uncertain write; use idempotency only where the target contract supports it.
+- [HTTP client](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/http-client), [rate limits](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/handling-rate-limits), [cache](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/caching), [data store](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/data-store), [logging](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/logging) and [error handling](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/error-handling) are version-sensitive. Never log tokens, headers, raw configuration or unnecessary identity attributes, including at debug level.
+
+## Verification layers
+
+1. **Offline:** inspect requirements, types and configuration; no CLI or credentials required. Unit/contract tests use synthetic payloads and a mocked target; test exact mapping and failure behavior.
+2. **Project-local:** run the repository's actual typecheck, test, lint and package commands after inspecting scripts and dependencies. Vendor [testing](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/testing), [debugging](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/in-depth/debugging) and [test/build/deploy](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/test-build-deploy) describe SDK local testing. A localhost harness may still call a real target; inspect it before execution.
+3. **Controlled live:** explicitly authorize environment, source, target, operation, test identities, permissions, cleanup and rollback; check the deployed version/configuration first. Creating source accounts, granting access, invoking write commands, uploading/linking and deployments are not authorized by a local test. Follow the parent skill's path/environment rules and reset overrides.
+4. **UAT/acceptance:** use the team's connector UAT methodology if one exists. Report required behavior, code, configured/deployed version, tests and stakeholder acceptance as separate facts. Mock success is not live acceptance.
+
+Record what was run, status, exact revision/version, environment, safe evidence link and unverified gaps. Never store secrets or unnecessary PII in design specs, fixtures, reports, debug output or Jira attachments. The vendor notes compiled uploads cannot substitute for preserving source in version control.

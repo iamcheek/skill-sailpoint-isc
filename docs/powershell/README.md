@@ -49,7 +49,7 @@ Get-Module iscUtils
 Get-Command -Module iscUtils
 ```
 
-Do not use `-Force` or update an existing installation automatically. If a newer version is needed, check it explicitly with `Find-Module -Name iscUtils -Repository PSGallery` and obtain approval before updating. A local `~/source/iscUtils` checkout is useful for module development, but must not be a runtime prerequisite for this skill. The published module can lag a source checkout, so verify that a requested cmdlet exists with `Get-Command -Module iscUtils` before using it.
+Do not use `-Force` or update an existing installation automatically. If a newer version is needed, check it explicitly with `Find-Module -Name iscUtils -Repository PSGallery` and obtain approval before updating. A local module source checkout is useful for module development, but must not be a runtime prerequisite for this skill. The published module can lag a source checkout, so verify that a requested cmdlet exists with `Get-Command -Module iscUtils` before using it.
 
 ## Authentication
 

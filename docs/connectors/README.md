@@ -1,17 +1,31 @@
-# Connector-Specific Reference
+# Connector engineering references
 
-Per-connector troubleshooting and configuration notes — one file per connector, loaded only when that specific connector is in play. This keeps connector-specific detail out of session context until it's actually needed, rather than baking it into a general investigation playbook that loads regardless of source.
+Use this index for connector design/builds, configuration discovery, integration profiles and troubleshooting. Load the relevant file on demand. Vendor connector documentation, generic connector guidance, an application-specific profile and live source configuration are different things.
 
-| Connector | File | Covers |
-|---|---|---|
-| Salesforce SaaS | [salesforce.md](salesforce.md) | Vendor-documented known-issues pattern-match table — provisioning and authentication. |
-| Web Services SaaS | [web-services-saas.md](web-services-saas.md) | General schema/mapping, parent-child operation, pagination, and aggregation guidance. |
+## Engineering workflows
 
-Absence of a connector here doesn't mean nothing's known about it — it means no one's built its reference file yet. Add one when a connector-specific issue gets investigated and confirmed, following the existing files as a template:
-- A short intro pointing back to this README.
-- A pattern-match table: symptom/error text → cause → resolution → notes, clearly identifying vendor-documented entries.
-- A "How to use this during an investigation" section describing when to check it and what to do if nothing matches.
+| Task | Reference |
+|---|---|
+| Inventory every source in a tenant, match each to its SailPoint connector guide, and draft or refresh integration profiles | [Environment connector discovery](environment-discovery.md) — read-only ISC access; writes local profile files only after approval. |
+| Inventory an existing source's schemas, policies, mappings and capabilities for planning or troubleshooting | [Configuration discovery](configuration-discovery.md) — read-only; reports unknowns and provenance. |
+| Create, review or update a durable integration profile | [Profile-building routine](profile-building.md) — synthesize requirements, rationale, implementation and dated observations. |
+| Start or resume a SaaS connector/customizer interview, discovery, decision map or repository spec | [Discovery → specification](development/discovery.md) — offline-capable technical workflow; use your team's issue-tracking process for any requested tracker operations. |
+| Design, implement, test or troubleshoot a connector or customizer | [Development guide](development/README.md) — SDK, connector, customizer, command, testing and handoff references. |
 
-## When to load a connector's file
+## Integration profiles
 
-From any investigation (provisioning, connection health, aggregation, etc.), once you've identified which connector/source is involved and have an actual error message or symptom in hand — not before. See the linking pattern in [../investigations/provisioning.md](../investigations/provisioning.md#connector-specific-troubleshooting) for how an investigation playbook should point here rather than embedding connector-specific content directly.
+No integration profiles are bundled with this skill. Profiles describe one organization's implementation (its sources, configuration, requirements, design decisions and known issues), so they live under a profile root you choose, with one folder per organization (see [Profile location](profile-building.md#profile-location)). Use [environment connector discovery](environment-discovery.md) to draft profiles for every source in a tenant, or the [profile-building routine](profile-building.md) for one integration.
+
+Profile location, organization folders and `tenants.md` are defined in [profile-building](profile-building.md#profile-location). Load a matching integration profile whenever its connector is identified and relevant, including planning, development and UAT—not just after a failure. Match aliases, source, environment and version before applying claims; label conflicting or stale facts. If no profile exists, report that gap and use [profile-building](profile-building.md) when asked to create one.
+
+## Generic connector references
+
+[generic/](generic/README.md) holds guidance for connectors that describe a protocol or format rather than one application (Web Services, SCIM, JDBC, Delimited File and similar), which many integrations share. Load the matching file whenever a source uses one of these connectors, alongside the integration profile. App-specific connectors (Salesforce, Okta, Workday and so on) have no generic file; their guidance comes from the SailPoint guide and the profile.
+
+| Connector family | File |
+|---|---|
+| Web Services SaaS | [generic/web-services-saas.md](generic/web-services-saas.md) |
+
+## Where troubleshooting findings go
+
+A confirmed troubleshooting finding goes into the integration profile's [known issues](profile-building.md#known-issues), tagged connector-general, integration-specific or unverified. Connector-general findings on a generic connector can then be [promoted](generic/README.md#rules-for-these-files) into the generic file. See [../investigations/provisioning.md](../investigations/provisioning.md#connector-specific-troubleshooting) for how investigations use these files.

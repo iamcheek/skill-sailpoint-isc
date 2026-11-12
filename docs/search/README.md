@@ -43,6 +43,7 @@ Full field-by-field breakdown of each of the six indices is in [searchable-field
 ## Core query concepts
 
 - **Field levels.** A query targets a field with `field:term`. Fields nest: `attributes.location:austin` — `attributes` is a *second-level field* (an object), `location` is the *first-level field* inside it holding the actual value.
+- **Active people.** To find currently active people/identities, use `attributes.identityState:ACTIVE`. Do not substitute top-level `status:ACTIVE`; ISC identity-record status is not the person's current active state.
 - **No spaces around the colon.** Never write `field: term` or `field :term` — only `field:term`.
 - **Nested objects (one-to-many).** Fields that can have multiple instances per record (e.g. an identity's `accounts`, an identity's `access`) are queried with a special `@object(...)` syntax: `@accounts(source.name:Acme)`. See [building-query.md](building-query.md) for the full nested-query rules.
 - **Boolean logic.** `AND`, `OR`, `NOT` (all caps) or their symbolic equivalents `&&`, `||`, `!`. Parentheses control evaluation order.

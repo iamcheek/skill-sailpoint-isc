@@ -11,8 +11,10 @@ Format: `field:term`. **Do not put spaces in the field portion of your query or 
 ```
 displayName:john.smith
 created:2018-06-01
-status:ACTIVE
+attributes.identityState:ACTIVE
 ```
+
+For active-person populations, filter on `attributes.identityState:ACTIVE`. Do not use top-level `status:ACTIVE` as a proxy: it describes ISC identity-record status, not whether the person is currently active.
 
 ## Second-level fields
 

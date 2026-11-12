@@ -139,9 +139,9 @@ Once root cause is confirmed as something that self-resolves (for example, a tra
 
 ## Connector-specific troubleshooting
 
-Once you know which connector/source is involved and have an actual error message or symptom in hand, check [docs/connectors/](../connectors/README.md) for a per-connector reference file before root-causing from scratch — each file is a pattern-match table of known error signatures (vendor-documented and/or verified in live testing) that may already cover what you're seeing. This applies whether the investigation is provisioning-related or something else entirely (connection health, auth setup, aggregation, etc.).
+Once you know which connector/source is involved and have an actual error message or symptom in hand, check two places before root-causing from scratch. This applies whether the investigation is about provisioning or something else (connection health, auth setup, aggregation):
 
-Currently cataloged:
-- [Salesforce SaaS](../connectors/salesforce.md)
+1. **The integration profile's known issues.** Find the profile for the source's organization and integration (see [profile location](../connectors/profile-building.md#profile-location)) and scan its known-issues table. Also scan connector-general and unverified rows in that organization's other profiles that use the same connector. If no profile exists, [environment connector discovery](../connectors/environment-discovery.md) can draft one.
+2. **The generic connector reference**, if the source uses a generic connector (Web Services, SCIM, JDBC, Delimited File); see [generic/](../connectors/generic/README.md). For other connectors, the vendor guide's troubleshooting page is linked from the profile's connector documentation section.
 
-Absence of a connector in that catalog doesn't mean the Source 1-3 methodology above doesn't apply — it means no one's built that connector's reference file yet.
+Not finding a match does not mean the Source 1-3 methodology above is unnecessary. Once a new pattern is confirmed, propose a known-issues row for the profile through the [known-issues gate](../connectors/profile-building.md#known-issues).

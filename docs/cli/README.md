@@ -2,7 +2,7 @@
 
 Mechanics of the `sail` CLI tool itself — flags, output handling, and CLI-level gotchas. This is *how to invoke the tool*; for *what to call it with* (endpoints, filters, query syntax), see [docs/api/](../api/README.md) and [docs/search/](../search/README.md).
 
-Every command in this file must include the explicitly selected `--env <name>` in practice — see the parent [SKILL.md](../../SKILL.md) Step 2 for environment selection, which is not repeated here since it's session setup, not a CLI mechanic. Preserve that flag on every command in a loop or script; never rely on the CLI's persisted active environment.
+Every command in this file must include the explicitly selected `--env <name>` in practice — see the parent [SKILL.md](../../SKILL.md) Step 2a for environment selection, which is not repeated here since it's session setup, not a CLI mechanic. Preserve that flag on every command in a loop or script; never rely on the CLI's persisted active environment.
 
 ## `sail search query`
 
@@ -24,7 +24,8 @@ See [docs/search/README.md](../search/README.md) for valid `<INDEX>` values and 
 | `--pretty` | all | Pretty-prints the JSON response. Always use this. |
 | `--query "key=value"` | `get`, `put`, `patch`, `delete` — **not `post`** | Repeatable — pass once per query param (e.g. `--query "limit=50" --query "offset=0"`). **`sail api post` rejects this flag** with `Error: unknown flag: --query` (confirmed live). For POST requests, inline any query string directly into the path instead: `sail api post "/access-request-administration/v1?count=true&limit=1" ...`. |
 | `--body '<json>'` | `post`, `put`, `patch` | Request body as a literal string. |
-| `--body-file <path>` | `post`, `put`, `patch` | Request body read from a file — use for large bodies. |
+| `--body-file <path>` | `post`, `put`, `patch` | Request body read from a file — use for large bodies or non-JSON bodies. |
+| `--content-type <type>` | `post`, `put`, `patch` | Sets the request body's Content-Type; POST/PUT default to `application/json`. Use with `--body`/`--body-file` for APIs requiring `multipart/form-data`. |
 | `-H 'Header: value'` | all | Repeatable. Required for experimental endpoints, e.g. `-H 'X-SailPoint-Experimental: true'`. |
 | `--jsonpath "$.field"` | all | Extract specific fields from the response instead of returning the full body. |
 
